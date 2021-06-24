@@ -179,10 +179,9 @@ background: url();
 #contact-box label{
    font-size: 1.3rem;
    font-family: cursive;
-   margin: 285px;
 }
 
-#contact-box #nom{
+/*#contact-box #nom{
     font-size: 1.3rem;
     font-family: cursive;
     margin: 245px;
@@ -192,7 +191,7 @@ background: url();
     font-size: 1.3rem;
     font-family: cursive;
     margin: 275px;
- }
+ }*/
 
 
 footer{
