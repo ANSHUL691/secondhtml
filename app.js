@@ -1,33 +1,49 @@
-const express=require("express");
-const app=express();
-const path=require("path");
-const port=80;
-const fs=require('fs');
-//express related
-app.use('/static',express.static('static'));
-app.use(express.urlencoded());
+const express = require("express");
+const path = require("path");
+const fs = require('fs');
+const app = express();
+
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/contactdance', { useNewUrlParser: true });
+const bodyparser = require("body-parser");
+const port = 80;
+//expresss related
+app.use(express.static('static'));
+
+//define mongoose schema
+var contactSchema = new mongoose.Schema({
+    name: String,
+    phone: String,
+    email: String,
+    address: String,
+});
+var Contact = mongoose.model('Contact', contactSchema);
+
 //pug related
-app.set('view engine','pug');
-app.set('views',path.join(__dirname,'views'));
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 //endpoints realted
-app.get('/',(req,res)=>{
-    const con="yahoo";
-    const par={'title': 'Food Panzer','content':con}
-    res.status(200).render('index.pug',par);
+app.get('/', (req, res) => {
+    const par = {}
+    res.status(200).render('home.pug', par);
 })
 
-app.post('/',(req,res)=>{
-    nam = req.body.name
-    email = req.body.email
-    phone = req.body.phone
-    message = req.body.message
-    let outputWritten=`The name is ${nam} , email is ${email} , phone number is ${phone} and message is ${message}`; 
-    fs.writeFileSync('output.txt',outputWritten);
-    const par={'message': 'Your form has been submitted'}
-    res.status(200).render('index.pug',par);
+app.get('/contact', (req, res) => {
+    const par = {}
+    res.status(200).render('contact.pug', par);
 })
+
+app.post('/contact', (req, res) => {
+    var myData = new Contact(req.body);
+    myData.save().then(() => {
+        res.send("This item has been saved to the database")
+    }).catch(() => {
+        res.status(400).send("item was not saved to the databse")
+    });
+})
+
 //port related
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(`this app ran successfuly on ${port}`);
 })
